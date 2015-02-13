@@ -24,9 +24,20 @@ var componentToJson = function (component) {
     children = _.map(children, componentToJson);
   }
 
+  var props = _.chain(component.props)
+    .omit('children')
+    .transform(function (result, prop, key) {
+      if (_.isString(prop)) {
+        result[key] = prop;
+      } else {
+        result[key] = 'LITERAL!' + JSON.stringify(prop) + '!LITERAL';
+      }
+    })
+    .value();
+
   componentJson = {
     _name: name,
-    _attrs: _.omit(component.props, 'children'),
+    _attrs: props,
     _content: children
   };
 
@@ -35,8 +46,13 @@ var componentToJson = function (component) {
 
 var ReactToJsx = function (component) {
   componentXml = jstoxml.toXML(componentToJson(component), {
-    indent: String.fromCharCode(9)
+    indent: '\t'
   });
+
+  console.log(componentXml);
+
+  componentXml = componentXml.replace(/"LITERAL!/gi, '{');
+  componentXml = componentXml.replace(/!LITERAL"/gi, '}');
 
   return componentXml;
 };

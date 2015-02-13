@@ -27,10 +27,10 @@ var Example = React.createClass({
     var markup = ReactToJsx(children);
 
     return (
-      <div>
-        <div>{this.props.children}</div>
+      <div className="example">
+        <div className="description">{this.props.children}</div>
 
-        <pre>{markup}</pre>
+        <pre className="sample">{markup}</pre>
       </div>
     )
   }
@@ -42,8 +42,11 @@ var App = React.createClass({
       <div>
         <Example>
           <TestSection
+            cool={true}
             type="primary"
             size="large"
+            friends={["john", "mark"]}
+            style={{backgroundColor: "red", border: "1px solid blue"}}
           >
             <h1>This is a section</h1>
 
