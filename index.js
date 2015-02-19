@@ -1,12 +1,18 @@
-var React = require('react');
 var _ = require('lodash');
 var jstoxml = require('jstoxml');
 
 var componentToJson = function (component) {
   var componentJson = {};
-  var componentXml;
-
+  var componentArray = [];
   var name;
+
+  if (_.isArray(component)) {
+    _.forEach(component, function (item) {
+      componentArray.push(componentToJson(item));
+    });
+
+    return componentArray;
+  }
 
   if (component.type && component.type.displayName) {
     name = component.type.displayName;
@@ -19,7 +25,7 @@ var componentToJson = function (component) {
   var children;
 
   if (component.props && component.props.children) {
-    children = component.props.children;
+    children = _.clone(component.props.children);
     children = _.isArray(children) ? children : [children];
     children = _.map(children, componentToJson);
   }
@@ -29,6 +35,8 @@ var componentToJson = function (component) {
     .transform(function (result, prop, key) {
       if (_.isString(prop)) {
         result[key] = prop;
+      } else if (_.isFunction(prop)) {
+        result[key] = 'LITERAL!function!LITERAL';
       } else {
         result[key] = 'LITERAL!' + JSON.stringify(prop) + '!LITERAL';
       }
@@ -45,14 +53,36 @@ var componentToJson = function (component) {
 }
 
 var ReactToJsx = function (component) {
-  componentXml = jstoxml.toXML(componentToJson(component), {
+  var componentXml = jstoxml.toXML(componentToJson(component), {
     indent: '\t'
   });
 
-  console.log(componentXml);
+  componentXml = componentXml
+    .replace(/"LITERAL!/g, '{')
+    .replace(/!LITERAL"/g, '}')
 
-  componentXml = componentXml.replace(/"LITERAL!/gi, '{');
-  componentXml = componentXml.replace(/!LITERAL"/gi, '}');
+  var componentArray = componentXml.split('\n');
+
+  componentArray = _.map(componentArray, function (line) {
+    var attributeMatcher = /\s+(?=\S*=)/g;
+
+    if ((line.match(attributeMatcher) || []).length < 2) {
+      return line;
+    }
+
+    var indentDepth = (line.match(/\t/g) || []).length;
+    var newlineString = '\n\t';
+
+    for (var i = 0; i < indentDepth; i++) {
+      newlineString += '\t';
+    }
+
+    line = line.replace(attributeMatcher, newlineString);
+
+    return line;
+  });
+
+  componentXml = componentArray.join('\n');
 
   return componentXml;
 };
