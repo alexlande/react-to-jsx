@@ -30,8 +30,18 @@ var componentToJson = function (component) {
     children = _.map(children, componentToJson);
   }
 
-  var props = _.chain(component.props)
-    .omit('children')
+  var matchingProps;
+
+  if (component.type && component.type.defaultProps) {
+    matchingProps = _.omit(component.props, function (val, key) {
+      return component.type.defaultProps[key] === component.props[key];
+    });
+  } else {
+    matchingProps = component.props;
+  }
+
+  var props = _.chain(matchingProps)
+    .omit(['children'])
     .transform(function (result, prop, key) {
       if (_.isString(prop)) {
         result[key] = prop;
