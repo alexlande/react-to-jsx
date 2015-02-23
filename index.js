@@ -52,9 +52,15 @@ var componentToJson = function (component) {
   return componentJson;
 }
 
-var ReactToJsx = function (component) {
-  var componentXml = jstoxml.toXML(componentToJson(component), {
+var reactToJsx = function (component, options) {
+  var defaults = {
     indent: '\t'
+  };
+
+  var config = _.extend({}, defaults, options);
+
+  var componentXml = jstoxml.toXML(componentToJson(component), {
+    indent: config.indent
   });
 
   componentXml = componentXml
@@ -70,11 +76,13 @@ var ReactToJsx = function (component) {
       return line;
     }
 
-    var indentDepth = (line.match(/\t/g) || []).length;
-    var newlineString = '\n\t';
+    var indentRegex = new RegExp(config.indent, 'g');
+
+    var indentDepth = (line.match(indentRegex) || []).length;
+    var newlineString = '\n' + config.indent;
 
     for (var i = 0; i < indentDepth; i++) {
-      newlineString += '\t';
+      newlineString += config.indent;
     }
 
     line = line.replace(attributeMatcher, newlineString);
@@ -87,4 +95,4 @@ var ReactToJsx = function (component) {
   return componentXml;
 };
 
-module.exports = ReactToJsx;
+module.exports = reactToJsx;
