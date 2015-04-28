@@ -1,14 +1,14 @@
 var _ = require('lodash');
 var jstoxml = require('jstoxml');
 
-var componentToJson = function (component) {
+var componentToJson = function (component, config) {
   var componentJson = {};
   var componentArray = [];
   var name;
 
   if (_.isArray(component)) {
     _.forEach(component, function (item) {
-      componentArray.push(componentToJson(item));
+      componentArray.push(componentToJson(item, config));
     });
 
     return componentArray;
@@ -27,7 +27,15 @@ var componentToJson = function (component) {
   if (component.props && component.props.children) {
     children = component.props.children;
     children = _.isArray(children) ? children : [children];
-    children = _.map(children, componentToJson);
+    // children = _.map(children, componentToJson);
+    children = _.map(children, function (child, config) {
+      var result = componentToJson(child, config);
+
+      return result;
+
+
+      return componentToJson(child, config);
+    });
   }
 
   var matchingProps;
@@ -43,7 +51,13 @@ var componentToJson = function (component) {
   var props = _.chain(matchingProps)
     .omit(['children'])
     .transform(function (result, prop, key) {
-      if (_.isString(prop)) {
+      if (_.isUndefined(prop)) {
+        return;
+      } else if (_.isNull(prop) && !config.includeNull) {
+        return;
+      } else if (config.exclude && config.exclude.indexOf(key) !== -1) {
+        return;
+      } else if (_.isString(prop)) {
         result[key] = prop;
       } else if (_.isFunction(prop)) {
         result[key] = 'LITERAL!function!LITERAL';
@@ -64,12 +78,14 @@ var componentToJson = function (component) {
 
 var reactToJsx = function (component, options) {
   var defaults = {
-    indent: '\t'
+    indent: '\t',
+    includeNull: true,
+    exclude: []
   };
 
   var config = _.extend({}, defaults, options);
 
-  var componentXml = jstoxml.toXML(componentToJson(component), {
+  var componentXml = jstoxml.toXML(componentToJson(component, config), {
     indent: config.indent
   });
 

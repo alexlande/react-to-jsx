@@ -36,9 +36,21 @@ console.log(jsxString);
 
 `reactToJsx` takes an optional `options` object: `reactToJsx(reactElement, options)`.
 
-#### Indent
+#### `indent`
 
 Type: `String` Default: `'\t'` (Tab)
 
 Sets the indent string for returned JSX. Should probably match your preferred
 code style. Two spaces? Four? Three? The choice is yours, friend.
+
+#### `includeNull`
+
+Type: 'Boolean' Default: `true`
+
+Determines whether to include props with a value of `null` in the returned JSX.
+
+#### `exclude`
+
+Type: `Array` Default: `[]`
+
+Array of props to exclude from the returned JSX. Hide those weird props, they shouldn't be in your docs anyway.
