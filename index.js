@@ -27,7 +27,6 @@ var componentToJson = function (component, config) {
   if (component.props && component.props.children) {
     children = component.props.children;
     children = _.isArray(children) ? children : [children];
-    // children = _.map(children, componentToJson);
     children = _.map(children, function (child, config) {
       var result = componentToJson(child, config);
 
