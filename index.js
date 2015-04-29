@@ -14,8 +14,8 @@ var componentToJson = function (component, config) {
     return componentArray;
   }
 
-  if (component.type && component.type.displayName) {
-    name = component.type.displayName;
+  if (component.type && (component.type.displayName || component.type.name)) {
+    name = component.type.displayName || component.type.name;
   } else if (component.type) {
     name = component.type;
   } else {
