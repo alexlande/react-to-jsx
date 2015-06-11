@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var jstoxml = require('jstoxml');
+var React = require('react');
 
 var componentToJson = function (component, config) {
   var componentJson = {};
@@ -28,11 +29,6 @@ var componentToJson = function (component, config) {
     children = component.props.children;
     children = _.isArray(children) ? children : [children];
     children = _.map(children, function (child, config) {
-      var result = componentToJson(child, config);
-
-      return result;
-
-
       return componentToJson(child, config);
     });
   }
@@ -60,8 +56,18 @@ var componentToJson = function (component, config) {
         result[key] = prop;
       } else if (_.isFunction(prop)) {
         result[key] = 'LITERAL!function!LITERAL';
+      } else if (React.isValidElement(prop)) {
+        result[key] = 'LITERAL!ReactElement!LITERAL';
       } else {
-        result[key] = 'LITERAL!' + JSON.stringify(prop) + '!LITERAL';
+        var stringified;
+
+        try {
+          stringified = JSON.stringify(prop);
+        } catch(e) {
+          stringified = '[Circular JSON]';
+        }
+
+        result[key] = 'LITERAL!' + stringified + '!LITERAL';
       }
     })
     .value();

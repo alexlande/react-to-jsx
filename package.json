@@ -6,7 +6,8 @@
   "license": "MIT",
   "dependencies": {
     "jstoxml": "^0.2.3",
-    "lodash": "^3.2.0"
+    "lodash": "^3.2.0",
+    "react": "^0.13.3"
   },
   "description": "Generates a JSX string representation of React elements",
   "keywords": [
