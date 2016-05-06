@@ -85,7 +85,8 @@ var reactToJsx = function (component, options) {
   var defaults = {
     indent: '\t',
     includeNull: true,
-    exclude: []
+    exclude: [],
+    omitBools: false
   };
 
   var config = _.extend({}, defaults, options);
@@ -102,6 +103,11 @@ var reactToJsx = function (component, options) {
 
   componentArray = _.map(componentArray, function (line) {
     var attributeMatcher = /\s+(?=\S*=)/g;
+
+    if (config.omitBools) {
+      var attributeShortener = /\s(\S*)=\{true\}/g;
+      line = line.replace(attributeShortener, ' $1');
+    }
 
     if ((line.match(attributeMatcher) || []).length < 2) {
       return line;
