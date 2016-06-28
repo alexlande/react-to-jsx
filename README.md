@@ -1,3 +1,5 @@
+**Node from maintainers: You should check [react-element-to-jsx-string](https://github.com/algolia/react-element-to-jsx-string) which does the same thing as react-to-jsx, with more options and updates.**
+
 # React to JSX
 
 Generates a JSX string representation of React elements. Takes a React Element (or an array of React Elements). Useful for generating React component style guides.
