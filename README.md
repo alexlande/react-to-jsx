@@ -56,3 +56,10 @@ Determines whether to include props with a value of `null` in the returned JSX.
 Type: `Array` Default: `[]`
 
 Array of props to exclude from the returned JSX. Hide those weird props, they shouldn't be in your docs anyway.
+
+#### `omitBools`
+
+Type: `Boolean` Default: `false`
+
+If enabled, boolean attributes that are set to true (`primary={true}`) will use the short syntax (`primary`)
+See https://facebook.github.io/react/docs/jsx-in-depth.html#boolean-attributes
