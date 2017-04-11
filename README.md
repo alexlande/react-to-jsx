@@ -1,4 +1,4 @@
-**Important: `react-to-jsx` is deprecated and unmaintained. Use [react-element-to-jsx-string](https://github.com/algolia/react-element-to-jsx-string) instead!.**
+**Important: `react-to-jsx` is deprecated and unmaintained. Use [react-element-to-jsx-string](https://github.com/algolia/react-element-to-jsx-string) instead!**
 
 # React to JSX
 
